@@ -16,7 +16,6 @@ root.render(
     domain={domain}
     clientId={clientId}
     redirectUri={window.location.origin}
-    audience={audience}
   >
     <App />
   </Auth0Provider>

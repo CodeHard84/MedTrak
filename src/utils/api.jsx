@@ -2,17 +2,17 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 
 export const useApi = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getIdTokenClaims } = useAuth0();
 
   const callApi = async (endpoint) => {
     try {
-      const token = await getAccessTokenSilently({
+      const token = await getIdTokenClaims({
         audience: process.env.VITE_AUTH0_AUDIENCE,
       });
       console.log("JWT Token:", token); // Log the token to verify it
       const response = await axios.get(endpoint, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token.__raw}`,
         },
       });
       return response.data;

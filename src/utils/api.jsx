@@ -7,7 +7,7 @@ export const useApi = () => {
   const callApi = async (endpoint) => {
     try {
       const token = await getIdTokenClaims({
-        audience: process.env.VITE_AUTH0_AUDIENCE,
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
       });
       console.log("JWT Token:", token); // Log the token to verify it
       const response = await axios.get(endpoint, {

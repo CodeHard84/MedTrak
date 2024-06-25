@@ -7,6 +7,7 @@ export const useApi = () => {
   const callApi = async (endpoint) => {
     try {
       const token = await getAccessTokenSilently();
+      console.log(`Calling API with token: ${token}`);
       const response = await axios.get(endpoint, {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -6,7 +6,7 @@ const useApi = () => {
 
   const getMedications = async () => {
     const token = await getAccessTokenSilently();
-    const response = await axios.get('/api/medications', {
+    const response = await axios.get('https://medtrakback.onrender.com/api/medications', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -16,7 +16,7 @@ const useApi = () => {
 
   const createMedication = async (medication) => {
     const token = await getAccessTokenSilently();
-    const response = await axios.post('/api/medications', medication, {
+    const response = await axios.post('https://medtrakback.onrender.com/api/medications', medication, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -26,7 +26,7 @@ const useApi = () => {
 
   const updateMedication = async (id, medication) => {
     const token = await getAccessTokenSilently();
-    const response = await axios.put(`/api/medications/${id}`, medication, {
+    const response = await axios.put(`https://medtrakback.onrender.com/api/medications/${id}`, medication, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -36,7 +36,7 @@ const useApi = () => {
 
   const deleteMedication = async (id) => {
     const token = await getAccessTokenSilently();
-    await axios.delete(`/api/medications/${id}`, {
+    await axios.delete(`https://medtrakback.onrender.com/api/medications/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

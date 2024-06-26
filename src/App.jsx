@@ -14,15 +14,19 @@ const App = () => {
 
   return (
     <div>
-      <NavBar
-        isAuthenticated={isAuthenticated}
-        loginWithRedirect={loginWithRedirect}
-        logout={logout}
-      />
-      <Routes>
-        <Route path="/" element={<MedicationsList />} />
-        <Route path="/create" element={<CreateMedication />} />
-      </Routes>
+      {!isAuthenticated && (
+        <button onClick={() => loginWithRedirect()}>Log In</button>
+      )}
+      {isAuthenticated && (
+        <>
+          <NavBar />
+          <button onClick={() => logout({ returnTo: window.location.origin })}>Log Out</button>
+          <Routes>
+            <Route path="/" element={<MedicationsList />} />
+            <Route path="/create" element={<CreateMedication />} />
+          </Routes>
+        </>
+      )}
     </div>
   );
 };

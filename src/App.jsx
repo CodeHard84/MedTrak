@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import MedicationsList from './components/MedicationsList';
 import CreateMedication from './components/CreateMedication';
@@ -21,10 +21,10 @@ const App = () => {
         <>
           <button onClick={() => logout({ returnTo: window.location.origin })}>Log Out</button>
           <NavBar />
-          <Switch>
-            <Route path="/" exact component={MedicationsList} />
-            <Route path="/create" component={CreateMedication} />
-          </Switch>
+          <Routes>
+            <Route path="/" element={<MedicationsList />} />
+            <Route path="/create" element={<CreateMedication />} />
+          </Routes>
         </>
       )}
     </div>

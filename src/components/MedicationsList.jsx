@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Table, Spinner } from 'react-bootstrap';
+import { Button, Container, Table, Spinner, Modal } from 'react-bootstrap';
 import useApi from '../api/medications';
 
 const MedicationsList = () => {
   const { getMedications, deleteMedication } = useApi();
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,9 +21,20 @@ const MedicationsList = () => {
     fetchMedications();
   }, [getMedications]);
 
-  const handleDelete = async (id) => {
-    await deleteMedication(id);
-    setMedications(medications.filter((medication) => medication._id !== id));
+  const handleShowModal = (id) => {
+    setDeleteId(id);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setDeleteId(null);
+  };
+
+  const handleDelete = async () => {
+    await deleteMedication(deleteId);
+    setMedications(medications.filter((medication) => medication._id !== deleteId));
+    handleCloseModal();
   };
 
   const handleEdit = (id) => {
@@ -57,12 +70,27 @@ const MedicationsList = () => {
               <td>{medication.frequency}</td>
               <td>
                 <Button variant="warning" onClick={() => handleEdit(medication._id)}>Edit</Button>{' '}
-                <Button variant="danger" onClick={() => handleDelete(medication._id)}>Delete</Button>
+                <Button variant="danger" onClick={() => handleShowModal(medication._id)}>Delete</Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this medication?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

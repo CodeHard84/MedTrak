@@ -6,6 +6,7 @@ const EditMedication = () => {
   const { id } = useParams();
   const { getMedications, updateMedication } = useApi();
   const [loading, setLoading] = useState(true);
+  const [initialDataFetched, setInitialDataFetched] = useState(false);
   const [formState, setFormState] = useState({
     name: '',
     dosage: '',
@@ -24,6 +25,7 @@ const EditMedication = () => {
             dosage: med.dosage,
             frequency: med.frequency
           });
+          setInitialDataFetched(true);
         }
       } catch (error) {
         console.error("Error fetching medication:", error);

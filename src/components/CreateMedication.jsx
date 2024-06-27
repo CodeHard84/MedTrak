@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import useApi from '../api/medications';
 
 const CreateMedication = () => {
@@ -12,7 +14,7 @@ const CreateMedication = () => {
     howManyTimes: 1,
     times: [''],
     dayOfWeek: '',
-    dayOfMonth: 1,
+    dayOfMonth: null,
     time: ''
   });
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const CreateMedication = () => {
     setFormState((prevState) => ({
       ...prevState,
       [name]: value,
-      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [], dayOfWeek: '', dayOfMonth: 1, time: '' } : {}),
+      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [], dayOfWeek: '', dayOfMonth: null, time: '' } : {}),
       ...(name === 'frequency' && value === 'daily' ? { howManyTimes: 1, times: [''] } : {})
     }));
   };
@@ -36,10 +38,20 @@ const CreateMedication = () => {
     }));
   };
 
+  const handleDateChange = (date) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      dayOfMonth: date
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createMedication(formState);
+      await createMedication({
+        ...formState,
+        dayOfMonth: formState.dayOfMonth ? formState.dayOfMonth.toISOString() : null
+      });
       navigate('/');
     } catch (error) {
       console.error('Error creating medication:', error);
@@ -175,29 +187,16 @@ const CreateMedication = () => {
           <>
             <Form.Group as={Row} className="mb-3" controlId="formDayOfMonth">
               <Form.Label column sm={2}>
-                Day of the Month
+                Day and Time
               </Form.Label>
               <Col sm={10}>
-                <Form.Control
-                  type="number"
+                <DatePicker
+                  selected={formState.dayOfMonth}
+                  onChange={handleDateChange}
+                  showTimeSelect
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  className="form-control"
                   name="dayOfMonth"
-                  min="1"
-                  max="31"
-                  value={formState.dayOfMonth || ''}
-                  onChange={handleInputChange}
-                />
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row} className="mb-3" controlId="formTimeMonthly">
-              <Form.Label column sm={2}>
-                Time
-              </Form.Label>
-              <Col sm={10}>
-                <Form.Control
-                  type="time"
-                  name="time"
-                  value={formState.time || ''}
-                  onChange={handleInputChange}
                 />
               </Col>
             </Form.Group>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import useApi from '../api/medications';
 
 const EditMedication = () => {
@@ -56,43 +57,65 @@ const EditMedication = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Container className="text-center mt-5">
+        <Spinner animation="border" />
+        <p>Loading...</p>
+      </Container>
+    );
   }
 
   return (
-    <div>
+    <Container className="mt-5">
       <h1>Edit Medication</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formState.name}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Dosage</label>
-          <input
-            type="text"
-            name="dosage"
-            value={formState.dosage}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label>Frequency</label>
-          <input
-            type="text"
-            name="frequency"
-            value={formState.frequency}
-            onChange={handleInputChange}
-          />
-        </div>
-        <button type="submit">Update</button>
-      </form>
-    </div>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group as={Row} className="mb-3" controlId="formName">
+          <Form.Label column sm={2}>
+            Name
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              name="name"
+              value={formState.name}
+              onChange={handleInputChange}
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3" controlId="formDosage">
+          <Form.Label column sm={2}>
+            Dosage
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              name="dosage"
+              value={formState.dosage}
+              onChange={handleInputChange}
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-3" controlId="formFrequency">
+          <Form.Label column sm={2}>
+            Frequency
+          </Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="text"
+              name="frequency"
+              value={formState.frequency}
+              onChange={handleInputChange}
+            />
+          </Col>
+        </Form.Group>
+
+        <Button variant="primary" type="submit">
+          Update
+        </Button>
+      </Form>
+    </Container>
   );
 };
 

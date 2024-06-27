@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Form, Button, Container } from 'react-bootstrap';
 import useApi from '../api/medications';
 
 const CreateMedication = () => {
@@ -13,29 +14,45 @@ const CreateMedication = () => {
     e.preventDefault();
     const newMedication = { name, dosage, frequency };
     await createMedication(newMedication);
-    // Redirect to the medication list after successful creation
     navigate('/');
   };
 
   return (
-    <div>
+    <Container className="mt-5">
       <h1>Create Medication</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-        <div>
-          <label>Dosage</label>
-          <input type="text" value={dosage} onChange={(e) => setDosage(e.target.value)} />
-        </div>
-        <div>
-          <label>Frequency</label>
-          <input type="text" value={frequency} onChange={(e) => setFrequency(e.target.value)} />
-        </div>
-        <button type="submit">Create</button>
-      </form>
-    </div>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="formName">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formDosage">
+          <Form.Label>Dosage</Form.Label>
+          <Form.Control
+            type="text"
+            value={dosage}
+            onChange={(e) => setDosage(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formFrequency">
+          <Form.Label>Frequency</Form.Label>
+          <Form.Control
+            type="text"
+            value={frequency}
+            onChange={(e) => setFrequency(e.target.value)}
+          />
+        </Form.Group>
+
+        <Button variant="primary" type="submit">
+          Create
+        </Button>
+      </Form>
+    </Container>
   );
 };
 

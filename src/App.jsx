@@ -10,7 +10,7 @@ const App = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
   if (isLoading) {
-    return <div>Loading...</div>; // <--- this really only fires when MongoDB is still spinning up.
+    return <div>Loading...</div>;
   }
 
   return (
@@ -20,11 +20,13 @@ const App = () => {
         loginWithRedirect={loginWithRedirect}
         logout={logout}
       />
-      <Routes>
-        <Route path="/" element={<MedicationsList />} />
-        <Route path="/create" element={<CreateMedication />} />
-        <Route path="/edit/:id" element={<EditMedication />} />
-      </Routes>
+      <Container className="mt-3">
+        <Routes>
+          <Route path="/" element={<MedicationsList />} />
+          <Route path="/create" element={<CreateMedication />} />
+          <Route path="/edit/:id" element={<EditMedication />} />
+        </Routes>
+      </Container>
     </div>
   );
 };

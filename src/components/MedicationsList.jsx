@@ -8,7 +8,7 @@ const MedicationsList = () => {
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
+  const [deleteMedicationDetails, setDeleteMedicationDetails] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,19 +21,19 @@ const MedicationsList = () => {
     fetchMedications();
   }, [getMedications]);
 
-  const handleShowModal = (id) => {
-    setDeleteId(id);
+  const handleShowModal = (medication) => {
+    setDeleteMedicationDetails(medication);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setDeleteId(null);
+    setDeleteMedicationDetails(null);
   };
 
   const handleDelete = async () => {
-    await deleteMedication(deleteId);
-    setMedications(medications.filter((medication) => medication._id !== deleteId));
+    await deleteMedication(deleteMedicationDetails._id);
+    setMedications(medications.filter((medication) => medication._id !== deleteMedicationDetails._id));
     handleCloseModal();
   };
 
@@ -70,7 +70,7 @@ const MedicationsList = () => {
               <td>{medication.frequency}</td>
               <td>
                 <Button variant="warning" onClick={() => handleEdit(medication._id)}>Edit</Button>{' '}
-                <Button variant="danger" onClick={() => handleShowModal(medication._id)}>Delete</Button>
+                <Button variant="danger" onClick={() => handleShowModal(medication)}>Delete</Button>
               </td>
             </tr>
           ))}
@@ -81,7 +81,7 @@ const MedicationsList = () => {
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this medication?</Modal.Body>
+        <Modal.Body>Are you sure you want to delete the medication "{deleteMedicationDetails?.name}"?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
             Cancel

@@ -5,6 +5,7 @@ import MedicationsList from './components/MedicationsList';
 import CreateMedication from './components/CreateMedication';
 import EditMedication from './components/EditMedication';
 import NavBar from './components/NavBar';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   const { isLoading, isAuthenticated, loginWithRedirect, logout } = useAuth0();

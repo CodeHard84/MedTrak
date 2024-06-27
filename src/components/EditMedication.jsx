@@ -7,9 +7,11 @@ const EditMedication = () => {
   const { getMedications, updateMedication } = useApi();
   const [loading, setLoading] = useState(true);
   const [medication, setMedication] = useState(null);
-  const [name, setName] = useState('');
-  const [dosage, setDosage] = useState('');
-  const [frequency, setFrequency] = useState('');
+  const [formState, setFormState] = useState({
+    name: '',
+    dosage: '',
+    frequency: ''
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,9 +20,11 @@ const EditMedication = () => {
       const med = medications.find((medication) => medication._id === id);
       if (med) {
         setMedication(med);
-        setName(med.name);
-        setDosage(med.dosage);
-        setFrequency(med.frequency);
+        setFormState({
+          name: med.name,
+          dosage: med.dosage,
+          frequency: med.frequency
+        });
         setLoading(false);
       }
     };
@@ -28,10 +32,17 @@ const EditMedication = () => {
     fetchMedication();
   }, [id, getMedications]);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState({
+      ...formState,
+      [name]: value
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedMedication = { name, dosage, frequency };
-    await updateMedication(id, updatedMedication);
+    await updateMedication(id, formState);
     navigate('/');
   };
 
@@ -45,15 +56,30 @@ const EditMedication = () => {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          <input
+            type="text"
+            name="name"
+            value={formState.name}
+            onChange={handleInputChange}
+          />
         </div>
         <div>
           <label>Dosage</label>
-          <input type="text" value={dosage} onChange={(e) => setDosage(e.target.value)} />
+          <input
+            type="text"
+            name="dosage"
+            value={formState.dosage}
+            onChange={handleInputChange}
+          />
         </div>
         <div>
           <label>Frequency</label>
-          <input type="text" value={frequency} onChange={(e) => setFrequency(e.target.value)} />
+          <input
+            type="text"
+            name="frequency"
+            value={formState.frequency}
+            onChange={handleInputChange}
+          />
         </div>
         <button type="submit">Update</button>
       </form>

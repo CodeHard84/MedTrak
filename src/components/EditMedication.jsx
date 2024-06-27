@@ -71,7 +71,7 @@ const EditMedication = () => {
             name="name"
             // Ensure value reflects the state consistently
             value={formState.name}
-            onChange={handleInputChange}
+            // onChange={handleInputChange}
           />
         </div>
         <div>
@@ -80,7 +80,7 @@ const EditMedication = () => {
             type="text"
             name="dosage"
             value={formState.dosage}
-            onChange={handleInputChange}
+            // onChange={handleInputChange}
           />
         </div>
         <div>
@@ -89,7 +89,7 @@ const EditMedication = () => {
             type="text"
             name="frequency"
             value={formState.frequency}
-            onChange={handleInputChange}
+            // onChange={handleInputChange}
           />
         </div>
         <button type="submit">Update</button>

@@ -6,7 +6,7 @@ const NavBar = ({ isAuthenticated, loginWithRedirect, logout }) => (
   <Navbar bg="light" expand="lg">
     <Container>
       <LinkContainer to="/">
-        <Navbar.Brand>MedTrack</Navbar.Brand>
+        <Navbar.Brand>MedTrak</Navbar.Brand>
       </LinkContainer>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">

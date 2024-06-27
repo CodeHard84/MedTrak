@@ -12,7 +12,8 @@ const EditMedication = () => {
     name: '',
     dosage: '',
     frequency: 'daily',
-    howManyTimes: 1
+    howManyTimes: 1,
+    times: ['']
   });
   const navigate = useNavigate();
 
@@ -26,7 +27,8 @@ const EditMedication = () => {
             name: med.name,
             dosage: med.dosage,
             frequency: med.frequency,
-            howManyTimes: med.howManyTimes || 1
+            howManyTimes: med.howManyTimes || 1,
+            times: med.times || ['']
           });
           setInitialLoad(false);
         }
@@ -45,7 +47,16 @@ const EditMedication = () => {
     setFormState((prevState) => ({
       ...prevState,
       [name]: value,
-      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined } : {})
+      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [] } : {})
+    }));
+  };
+
+  const handleTimeChange = (index, value) => {
+    const updatedTimes = [...formState.times];
+    updatedTimes[index] = value;
+    setFormState((prevState) => ({
+      ...prevState,
+      times: updatedTimes
     }));
   };
 
@@ -116,19 +127,41 @@ const EditMedication = () => {
           </Col>
         </Form.Group>
         {formState.frequency === 'daily' && (
-          <Form.Group as={Row} className="mb-3" controlId="formHowManyTimes">
-            <Form.Label column sm={2}>
-              How Many Times Daily
-            </Form.Label>
-            <Col sm={10}>
-              <Form.Control
-                type="number"
-                name="howManyTimes"
-                value={formState.howManyTimes || ''}
-                onChange={handleInputChange}
-              />
-            </Col>
-          </Form.Group>
+          <>
+            <Form.Group as={Row} className="mb-3" controlId="formHowManyTimes">
+              <Form.Label column sm={2}>
+                How Many Times
+              </Form.Label>
+              <Col sm={10}>
+                <Form.Control
+                  type="number"
+                  name="howManyTimes"
+                  value={formState.howManyTimes || ''}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setFormState((prevState) => ({
+                      ...prevState,
+                      times: Array(parseInt(e.target.value)).fill('')
+                    }));
+                  }}
+                />
+              </Col>
+            </Form.Group>
+            {Array.from({ length: formState.howManyTimes }).map((_, index) => (
+              <Form.Group as={Row} className="mb-3" controlId={`formTime${index}`} key={index}>
+                <Form.Label column sm={2}>
+                  Time {index + 1}
+                </Form.Label>
+                <Col sm={10}>
+                  <Form.Control
+                    type="time"
+                    value={formState.times[index] || ''}
+                    onChange={(e) => handleTimeChange(index, e.target.value)}
+                  />
+                </Col>
+              </Form.Group>
+            ))}
+          </>
         )}
         <Button variant="primary" type="submit">
           Update

@@ -30,4 +30,4 @@ const NavBar = ({ isAuthenticated, loginWithRedirect, logout }) => (
   </Navbar>
 );
 
-export default NavBa
+export default NavBar;

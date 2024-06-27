@@ -18,7 +18,7 @@ const EditMedication = () => {
     const fetchMedication = async () => {
       try {
         const medications = await getMedications();
-        const med = medications.find((medication) => medication._id === id);
+        const med = medications.find(medication => medication._id === id);
         if (med && initialLoad) {
           setFormState({
             name: med.name,
@@ -39,7 +39,7 @@ const EditMedication = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormState((prevState) => ({
+    setFormState(prevState => ({
       ...prevState,
       [name]: value
     }));

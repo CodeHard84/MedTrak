@@ -31,9 +31,10 @@ const EditMedication = () => {
         setLoading(false);
       }
     };
-
+  
     fetchMedication();
   }, [id, getMedications]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useApi from '../api/medications';
 
 const CreateMedication = () => {
@@ -6,14 +7,14 @@ const CreateMedication = () => {
   const [name, setName] = useState('');
   const [dosage, setDosage] = useState('');
   const [frequency, setFrequency] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newMedication = { name, dosage, frequency };
     await createMedication(newMedication);
-    setName('');
-    setDosage('');
-    setFrequency('');
+    // Redirect to the medication list after successful creation
+    navigate('/');
   };
 
   return (

@@ -124,7 +124,7 @@ const EditMedication = () => {
               <Form.Control
                 type="number"
                 name="howManyTimes"
-                value={formState.howManyTimes || '1'}
+                value={formState.howManyTimes || ''}
                 onChange={handleInputChange}
               />
             </Col>

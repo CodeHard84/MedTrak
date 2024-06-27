@@ -7,6 +7,7 @@ const EditMedication = () => {
   const { id } = useParams();
   const { getMedications, updateMedication } = useApi();
   const [loading, setLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [formState, setFormState] = useState({
     name: '',
     dosage: '',
@@ -20,22 +21,24 @@ const EditMedication = () => {
       try {
         const medications = await getMedications();
         const med = medications.find((medication) => medication._id === id);
-        if (med) {
+        if (med && initialLoad) {
           setFormState({
             name: med.name,
             dosage: med.dosage,
             frequency: med.frequency,
             howManyTimes: med.howManyTimes || 1
           });
-          setLoading(false);
+          setInitialLoad(false);
         }
       } catch (error) {
         console.error('Error fetching medication:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchMedication();
-  }, [id, getMedications]);
+  }, [id, getMedications, initialLoad]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -115,13 +118,13 @@ const EditMedication = () => {
         {formState.frequency === 'daily' && (
           <Form.Group as={Row} className="mb-3" controlId="formHowManyTimes">
             <Form.Label column sm={2}>
-              How Many Times
+              How Many Times Daily
             </Form.Label>
             <Col sm={10}>
               <Form.Control
                 type="number"
                 name="howManyTimes"
-                value={formState.howManyTimes || ''}
+                value={formState.howManyTimes || '1'}
                 onChange={handleInputChange}
               />
             </Col>

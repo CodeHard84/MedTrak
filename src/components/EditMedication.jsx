@@ -6,6 +6,7 @@ const EditMedication = () => {
   const { id } = useParams();
   const { getMedications, updateMedication } = useApi();
   const [loading, setLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [formState, setFormState] = useState({
     name: '',
     dosage: '',
@@ -18,12 +19,13 @@ const EditMedication = () => {
       try {
         const medications = await getMedications();
         const med = medications.find((medication) => medication._id === id);
-        if (med) {
+        if (med && initialLoad) {
           setFormState({
             name: med.name,
             dosage: med.dosage,
             frequency: med.frequency
           });
+          setInitialLoad(false);
         }
       } catch (error) {
         console.error("Error fetching medication:", error);
@@ -31,10 +33,9 @@ const EditMedication = () => {
         setLoading(false);
       }
     };
-  
+
     fetchMedication();
-  }, [id, getMedications]);
-  
+  }, [id, getMedications, initialLoad]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

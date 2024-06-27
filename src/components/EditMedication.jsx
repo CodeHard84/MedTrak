@@ -7,11 +7,11 @@ const EditMedication = () => {
   const { id } = useParams();
   const { getMedications, updateMedication } = useApi();
   const [loading, setLoading] = useState(true);
-  const [initialLoad, setInitialLoad] = useState(true);
   const [formState, setFormState] = useState({
     name: '',
     dosage: '',
-    frequency: ''
+    frequency: 'daily',
+    howManyTimes: 1
   });
   const navigate = useNavigate();
 
@@ -19,30 +19,30 @@ const EditMedication = () => {
     const fetchMedication = async () => {
       try {
         const medications = await getMedications();
-        const med = medications.find(medication => medication._id === id);
-        if (med && initialLoad) {
+        const med = medications.find((medication) => medication._id === id);
+        if (med) {
           setFormState({
             name: med.name,
             dosage: med.dosage,
-            frequency: med.frequency
+            frequency: med.frequency,
+            howManyTimes: med.howManyTimes || 1
           });
-          setInitialLoad(false);
+          setLoading(false);
         }
       } catch (error) {
-        console.error("Error fetching medication:", error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching medication:', error);
       }
     };
 
     fetchMedication();
-  }, [id, getMedications, initialLoad]);
+  }, [id, getMedications]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormState(prevState => ({
+    setFormState((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
+      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined } : {})
     }));
   };
 
@@ -52,7 +52,7 @@ const EditMedication = () => {
       await updateMedication(id, formState);
       navigate('/');
     } catch (error) {
-      console.error("Error updating medication:", error);
+      console.error('Error updating medication:', error);
     }
   };
 
@@ -82,7 +82,6 @@ const EditMedication = () => {
             />
           </Col>
         </Form.Group>
-
         <Form.Group as={Row} className="mb-3" controlId="formDosage">
           <Form.Label column sm={2}>
             Dosage
@@ -96,21 +95,38 @@ const EditMedication = () => {
             />
           </Col>
         </Form.Group>
-
         <Form.Group as={Row} className="mb-3" controlId="formFrequency">
           <Form.Label column sm={2}>
             Frequency
           </Form.Label>
           <Col sm={10}>
             <Form.Control
-              type="text"
+              as="select"
               name="frequency"
               value={formState.frequency}
               onChange={handleInputChange}
-            />
+            >
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </Form.Control>
           </Col>
         </Form.Group>
-
+        {formState.frequency === 'daily' && (
+          <Form.Group as={Row} className="mb-3" controlId="formHowManyTimes">
+            <Form.Label column sm={2}>
+              How Many Times
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control
+                type="number"
+                name="howManyTimes"
+                value={formState.howManyTimes || ''}
+                onChange={handleInputChange}
+              />
+            </Col>
+          </Form.Group>
+        )}
         <Button variant="primary" type="submit">
           Update
         </Button>

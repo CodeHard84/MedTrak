@@ -5,6 +5,7 @@ import MedicationsList from './components/MedicationsList';
 import CreateMedication from './components/CreateMedication';
 import EditMedication from './components/EditMedication';
 import NavBar from './components/NavBar';
+import { Container } from 'react-bootstrap'; // Import Container from react-bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {

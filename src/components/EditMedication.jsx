@@ -28,7 +28,7 @@ const EditMedication = () => {
             dosage: med.dosage,
             frequency: med.frequency,
             howManyTimes: med.howManyTimes || 1,
-            times: med.times || ['']
+            times: med.times.length > 0 ? med.times : Array(med.howManyTimes || 1).fill('')
           });
           setInitialLoad(false);
         }
@@ -47,7 +47,8 @@ const EditMedication = () => {
     setFormState((prevState) => ({
       ...prevState,
       [name]: value,
-      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [] } : {})
+      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [] } : {}),
+      ...(name === 'frequency' && value === 'daily' ? { howManyTimes: 1, times: [''] } : {})
     }));
   };
 
@@ -130,18 +131,20 @@ const EditMedication = () => {
           <>
             <Form.Group as={Row} className="mb-3" controlId="formHowManyTimes">
               <Form.Label column sm={2}>
-                How Many Times
+                How Many Doses Daily
               </Form.Label>
               <Col sm={10}>
                 <Form.Control
                   type="number"
                   name="howManyTimes"
+                  min="1"
                   value={formState.howManyTimes || ''}
                   onChange={(e) => {
                     handleInputChange(e);
+                    const newHowManyTimes = parseInt(e.target.value);
                     setFormState((prevState) => ({
                       ...prevState,
-                      times: Array(parseInt(e.target.value)).fill('')
+                      times: Array(newHowManyTimes).fill('').map((_, index) => prevState.times[index] || '')
                     }));
                   }}
                 />

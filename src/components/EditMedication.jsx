@@ -5,6 +5,7 @@ import useApi from '../api/medications';
 const EditMedication = () => {
   const { id } = useParams();
   const { getMedications, updateMedication } = useApi();
+  const [medication, setMedication] = useState(null);
   const [name, setName] = useState('');
   const [dosage, setDosage] = useState('');
   const [frequency, setFrequency] = useState('');
@@ -13,11 +14,12 @@ const EditMedication = () => {
   useEffect(() => {
     const fetchMedication = async () => {
       const medications = await getMedications();
-      const medication = medications.find((med) => med._id === id);
-      if (medication) {
-        setName(medication.name);
-        setDosage(medication.dosage);
-        setFrequency(medication.frequency);
+      const med = medications.find((medication) => medication._id === id);
+      if (med) {
+        setMedication(med);
+        setName(med.name);
+        setDosage(med.dosage);
+        setFrequency(med.frequency);
       }
     };
 
@@ -30,6 +32,10 @@ const EditMedication = () => {
     await updateMedication(id, updatedMedication);
     navigate('/');
   };
+
+  if (!medication) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>

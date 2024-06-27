@@ -10,7 +10,7 @@ const EditMedication = () => {
   const [formState, setFormState] = useState({
     name: '',
     dosage: '',
-    frequency: ''
+    frequency: '',
   });
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ const EditMedication = () => {
           setFormState({
             name: med.name,
             dosage: med.dosage,
-            frequency: med.frequency
+            frequency: med.frequency,
           });
           setInitialDataFetched(true);
         }
@@ -41,7 +41,7 @@ const EditMedication = () => {
     const { name, value } = e.target;
     setFormState((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 

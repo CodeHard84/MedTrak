@@ -5,6 +5,7 @@ import useApi from '../api/medications';
 const EditMedication = () => {
   const { id } = useParams();
   const { getMedications, updateMedication } = useApi();
+  const [loading, setLoading] = useState(true);
   const [medication, setMedication] = useState(null);
   const [name, setName] = useState('');
   const [dosage, setDosage] = useState('');
@@ -20,6 +21,7 @@ const EditMedication = () => {
         setName(med.name);
         setDosage(med.dosage);
         setFrequency(med.frequency);
+        setLoading(false);
       }
     };
 
@@ -33,7 +35,7 @@ const EditMedication = () => {
     navigate('/');
   };
 
-  if (!medication) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 

@@ -6,11 +6,10 @@ const EditMedication = () => {
   const { id } = useParams();
   const { getMedications, updateMedication } = useApi();
   const [loading, setLoading] = useState(true);
-  const [initialDataFetched, setInitialDataFetched] = useState(false);
   const [formState, setFormState] = useState({
     name: '',
     dosage: '',
-    frequency: '',
+    frequency: ''
   });
   const navigate = useNavigate();
 
@@ -23,9 +22,8 @@ const EditMedication = () => {
           setFormState({
             name: med.name,
             dosage: med.dosage,
-            frequency: med.frequency,
+            frequency: med.frequency
           });
-          setInitialDataFetched(true);
         }
       } catch (error) {
         console.error("Error fetching medication:", error);
@@ -39,10 +37,9 @@ const EditMedication = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // Ensure spread operator is used for proper state update
     setFormState((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -69,9 +66,8 @@ const EditMedication = () => {
           <input
             type="text"
             name="name"
-            // Ensure value reflects the state consistently
             value={formState.name}
-            // onChange={handleInputChange}
+            onChange={handleInputChange}
           />
         </div>
         <div>
@@ -80,7 +76,7 @@ const EditMedication = () => {
             type="text"
             name="dosage"
             value={formState.dosage}
-            // onChange={handleInputChange}
+            onChange={handleInputChange}
           />
         </div>
         <div>
@@ -89,7 +85,7 @@ const EditMedication = () => {
             type="text"
             name="frequency"
             value={formState.frequency}
-            // onChange={handleInputChange}
+            onChange={handleInputChange}
           />
         </div>
         <button type="submit">Update</button>

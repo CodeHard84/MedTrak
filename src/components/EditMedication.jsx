@@ -13,7 +13,10 @@ const EditMedication = () => {
     dosage: '',
     frequency: 'daily',
     howManyTimes: 1,
-    times: ['']
+    times: [''],
+    dayOfWeek: '',
+    dayOfMonth: 1,
+    time: ''
   });
   const navigate = useNavigate();
 
@@ -28,7 +31,10 @@ const EditMedication = () => {
             dosage: med.dosage,
             frequency: med.frequency,
             howManyTimes: med.howManyTimes || 1,
-            times: med.times.length > 0 ? med.times : Array(med.howManyTimes || 1).fill('')
+            times: med.times.length > 0 ? med.times : Array(med.howManyTimes || 1).fill(''),
+            dayOfWeek: med.dayOfWeek || '',
+            dayOfMonth: med.dayOfMonth || 1,
+            time: med.time || ''
           });
           setInitialLoad(false);
         }
@@ -47,7 +53,7 @@ const EditMedication = () => {
     setFormState((prevState) => ({
       ...prevState,
       [name]: value,
-      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [] } : {}),
+      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [], dayOfWeek: '', dayOfMonth: 1, time: '' } : {}),
       ...(name === 'frequency' && value === 'daily' ? { howManyTimes: 1, times: [''] } : {})
     }));
   };
@@ -164,6 +170,77 @@ const EditMedication = () => {
                 </Col>
               </Form.Group>
             ))}
+          </>
+        )}
+        {formState.frequency === 'weekly' && (
+          <>
+            <Form.Group as={Row} className="mb-3" controlId="formDayOfWeek">
+              <Form.Label column sm={2}>
+                Day of the Week
+              </Form.Label>
+              <Col sm={10}>
+                <Form.Control
+                  as="select"
+                  name="dayOfWeek"
+                  value={formState.dayOfWeek}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Select Day</option>
+                  <option value="Monday">Monday</option>
+                  <option value="Tuesday">Tuesday</option>
+                  <option value="Wednesday">Wednesday</option>
+                  <option value="Thursday">Thursday</option>
+                  <option value="Friday">Friday</option>
+                  <option value="Saturday">Saturday</option>
+                  <option value="Sunday">Sunday</option>
+                </Form.Control>
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formTimeWeekly">
+              <Form.Label column sm={2}>
+                Time
+              </Form.Label>
+              <Col sm={10}>
+                <Form.Control
+                  type="time"
+                  name="time"
+                  value={formState.time || ''}
+                  onChange={handleInputChange}
+                />
+              </Col>
+            </Form.Group>
+          </>
+        )}
+        {formState.frequency === 'monthly' && (
+          <>
+            <Form.Group as={Row} className="mb-3" controlId="formDayOfMonth">
+              <Form.Label column sm={2}>
+                Day of the Month
+              </Form.Label>
+              <Col sm={10}>
+                <Form.Control
+                  type="number"
+                  name="dayOfMonth"
+                  min="1"
+                  max="31"
+                  value={formState.dayOfMonth || ''}
+                  onChange={handleInputChange}
+                />
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formTimeMonthly">
+              <Form.Label column sm={2}>
+                Time
+              </Form.Label>
+              <Col sm={10}>
+                <Form.Control
+                  type="time"
+                  name="time"
+                  value={formState.time || ''}
+                  onChange={handleInputChange}
+                />
+              </Col>
+            </Form.Group>
           </>
         )}
         <Button variant="primary" type="submit">

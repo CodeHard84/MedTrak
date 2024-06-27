@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import useApi from '../api/medications';
 
 const EditMedication = () => {
@@ -17,7 +15,7 @@ const EditMedication = () => {
     howManyTimes: 1,
     times: [''],
     dayOfWeek: '',
-    dayOfMonth: null,
+    dayOfMonth: '',
     time: ''
   });
   const navigate = useNavigate();
@@ -35,7 +33,7 @@ const EditMedication = () => {
             howManyTimes: med.howManyTimes || 1,
             times: med.times.length > 0 ? med.times : Array(med.howManyTimes || 1).fill(''),
             dayOfWeek: med.dayOfWeek || '',
-            dayOfMonth: med.dayOfMonth ? new Date(med.dayOfMonth) : null,
+            dayOfMonth: med.dayOfMonth || '',
             time: med.time || ''
           });
           setInitialLoad(false);
@@ -55,7 +53,7 @@ const EditMedication = () => {
     setFormState((prevState) => ({
       ...prevState,
       [name]: value,
-      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [], dayOfWeek: '', dayOfMonth: null, time: '' } : {}),
+      ...(name === 'frequency' && value !== 'daily' ? { howManyTimes: undefined, times: [], dayOfWeek: '', dayOfMonth: '', time: '' } : {}),
       ...(name === 'frequency' && value === 'daily' ? { howManyTimes: 1, times: [''] } : {})
     }));
   };
@@ -69,20 +67,10 @@ const EditMedication = () => {
     }));
   };
 
-  const handleDateChange = (date) => {
-    setFormState((prevState) => ({
-      ...prevState,
-      dayOfMonth: date
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateMedication({
-        ...formState,
-        dayOfMonth: formState.dayOfMonth ? formState.dayOfMonth.toISOString() : null
-      });
+      await updateMedication(formState);
       navigate('/');
     } catch (error) {
       console.error('Error updating medication:', error);
@@ -227,16 +215,29 @@ const EditMedication = () => {
           <>
             <Form.Group as={Row} className="mb-3" controlId="formDayOfMonth">
               <Form.Label column sm={2}>
-                Day and Time
+                Day of the Month
               </Form.Label>
               <Col sm={10}>
-                <DatePicker
-                  selected={formState.dayOfMonth}
-                  onChange={handleDateChange}
-                  showTimeSelect
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  className="form-control"
+                <Form.Control
+                  type="number"
                   name="dayOfMonth"
+                  min="1"
+                  max="31"
+                  value={formState.dayOfMonth || ''}
+                  onChange={handleInputChange}
+                />
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row} className="mb-3" controlId="formTimeMonthly">
+              <Form.Label column sm={2}>
+                Time
+              </Form.Label>
+              <Col sm={10}>
+                <Form.Control
+                  type="time"
+                  name="time"
+                  value={formState.time || ''}
+                  onChange={handleInputChange}
                 />
               </Col>
             </Form.Group>

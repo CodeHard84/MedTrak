@@ -39,6 +39,7 @@ const EditMedication = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // Ensure spread operator is used for proper state update
     setFormState((prevState) => ({
       ...prevState,
       [name]: value,
@@ -68,6 +69,7 @@ const EditMedication = () => {
           <input
             type="text"
             name="name"
+            // Ensure value reflects the state consistently
             value={formState.name}
             onChange={handleInputChange}
           />

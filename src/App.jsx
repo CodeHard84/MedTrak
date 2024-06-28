@@ -13,7 +13,7 @@ import { Container } from 'react-bootstrap';
 import axios from 'axios';
 
 const App = () => {
-  const { isLoading, isAuthenticated, getIdTokenClaims, user } = useAuth0();
+  const { isLoading, isAuthenticated, getIdTokenClaims, user, loginWithRedirect, logout } = useAuth0();
 
   useEffect(() => {
     const ensureProfile = async () => {
@@ -44,7 +44,11 @@ const App = () => {
 
   return (
     <div>
-      <NavBar isAuthenticated={isAuthenticated} loginWithRedirect={loginWithRedirect} logout={logout} />
+      <NavBar
+        isAuthenticated={isAuthenticated}
+        loginWithRedirect={loginWithRedirect}
+        logout={logout}
+      />
       <Container className="mt-3">
         <Routes>
           <Route path="/" element={isAuthenticated ? <MedicationsList /> : <Hero />} />

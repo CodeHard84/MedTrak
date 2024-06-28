@@ -14,6 +14,16 @@ const useApi = () => {
     return response.data;
   };
 
+  const getMedicationById = async (id) => {
+    const token = await getIdTokenClaims();
+    const response = await axios.get(`https://medtrakback.onrender.com/api/medications/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token.__raw}`
+      }
+    });
+    return response.data;
+  };
+
   const createMedication = async (medication) => {
     const token = await getIdTokenClaims();
     const response = await axios.post('https://medtrakback.onrender.com/api/medications', medication, {
@@ -51,7 +61,7 @@ const useApi = () => {
     }
   };
 
-  return { getMedications, createMedication, updateMedication, deleteMedication };
+  return { getMedications, getMedicationById, createMedication, updateMedication, deleteMedication };
 };
 
 export default useApi;

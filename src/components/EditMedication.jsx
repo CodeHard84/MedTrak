@@ -252,3 +252,4 @@ const EditMedication = () => {
 };
 
 export default EditMedication;
+

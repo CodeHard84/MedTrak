@@ -212,3 +212,4 @@ const CreateMedication = () => {
 };
 
 export default CreateMedication;
+

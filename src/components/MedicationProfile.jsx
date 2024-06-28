@@ -21,14 +21,15 @@ const MedicationProfile = () => {
         // Check if description exists and generate if necessary
         if (response.description) {
           setDescription(response.description);
+          setLoading(false); // Stop loading if description already exists
         } else {
           const descriptionResponse = await generateDescription(response.name);
           setDescription(descriptionResponse.description);
+          setLoading(false); // Stop loading after description is generated
         }
       } catch (error) {
         console.error('Error fetching medication:', error);
-      } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading on error
       }
     };
 

@@ -9,6 +9,7 @@ const MedicationProfile = () => {
   const { getMedicationById, deleteMedication, generateDescription } = useApi();
   const [medication, setMedication] = useState(null);
   const [description, setDescription] = useState('');
+  const [sideEffects, setSideEffects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
@@ -18,14 +19,16 @@ const MedicationProfile = () => {
         const response = await getMedicationById(id);
         setMedication(response);
 
-        // Check if description exists and generate if necessary
-        if (response.description) {
+        // Check if description and side effects exist and generate if necessary
+        if (response.description && response.sideEffects) {
           setDescription(response.description);
-          setLoading(false); // Stop loading if description already exists
+          setSideEffects(response.sideEffects);
+          setLoading(false); // Stop loading if data already exists
         } else {
           const descriptionResponse = await generateDescription(response.name);
           setDescription(descriptionResponse.description);
-          setLoading(false); // Stop loading after description is generated
+          setSideEffects(descriptionResponse.sideEffects);
+          setLoading(false); // Stop loading after data is generated
         }
       } catch (error) {
         console.error('Error fetching medication:', error);
@@ -75,6 +78,18 @@ const MedicationProfile = () => {
         </div>
       ) : (
         <p>Loading description...</p>
+      )}
+      {sideEffects.length > 0 ? (
+        <div className="mt-3">
+          <h3>Top 10 Most Common Side Effects:</h3>
+          <ul>
+            {sideEffects.map((effect, index) => (
+              <li key={index}>{effect}</li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p>Loading side effects...</p>
       )}
       <div className="mt-3">
         <Button variant="warning" onClick={handleEdit} className="me-2">

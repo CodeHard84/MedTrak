@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Container, Table, Spinner, Modal } from 'react-bootstrap';
 import useApi from '../api/medications';
 
@@ -65,7 +65,11 @@ const MedicationsList = () => {
         <tbody>
           {medications.map((medication) => (
             <tr key={medication._id}>
-              <td>{medication.name}</td>
+              <td>
+                <Link to={`/medications/${medication._id}`}>
+                  {medication.name}
+                </Link>
+              </td>
               <td>{medication.dosage}</td>
               <td>{medication.frequency}</td>
               <td>

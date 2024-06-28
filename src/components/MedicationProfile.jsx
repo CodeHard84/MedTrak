@@ -9,8 +9,8 @@ const MedicationProfile = () => {
   const { getMedicationById, generateDescription } = useApi();
   const [medication, setMedication] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [descriptionLoading, setDescriptionLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [descriptionLoading, setDescriptionLoading] = useState(false);
 
   useEffect(() => {
     const fetchMedication = async () => {
@@ -19,11 +19,11 @@ const MedicationProfile = () => {
         setMedication(fetchedMedication);
 
         if (!fetchedMedication.description || !fetchedMedication.sideEffects) {
+          setDescriptionLoading(true);
           const { description, sideEffects } = await generateDescription(fetchedMedication.name, id);
           setMedication(prev => ({ ...prev, description, sideEffects }));
+          setDescriptionLoading(false);
         }
-
-        setDescriptionLoading(false);
       } catch (error) {
         console.error('Error fetching medication:', error);
       } finally {
@@ -64,7 +64,7 @@ const MedicationProfile = () => {
     );
   };
 
-  if (loading) {
+  if (loading || descriptionLoading) {
     return (
       <Container className="text-center mt-5">
         <Spinner animation="border" />
@@ -78,9 +78,7 @@ const MedicationProfile = () => {
       <h1>{medication.name}</h1>
       <p>Dosage: {medication.dosage}</p>
       <p>Frequency: {medication.frequency}</p>
-      {descriptionLoading ? (
-        <Spinner animation="border" />
-      ) : (
+      {medication.description ? (
         <>
           <div className="mt-3">
             <h3>Description:</h3>
@@ -91,6 +89,8 @@ const MedicationProfile = () => {
             {renderSideEffects()}
           </div>
         </>
+      ) : (
+        <p>Loading description...</p>
       )}
       <div className="mt-3">
         <Button variant="warning" onClick={handleEdit} className="me-2">

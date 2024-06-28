@@ -1,33 +1,42 @@
 import React from 'react';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { useAuth0 } from '@auth0/auth0-react';
 
-const NavBar = ({ isAuthenticated, loginWithRedirect, logout }) => (
-  <Navbar bg="light" expand="lg">
-    <Container>
-      <LinkContainer to="/">
-        <Navbar.Brand>MedTrak</Navbar.Brand>
-      </LinkContainer>
+const NavBar = ({ isAuthenticated, loginWithRedirect, logout }) => {
+  const { isLoading } = useAuth0();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <Navbar bg="light" expand="lg">
+      <Navbar.Brand href="/">MedTrak</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
-          <LinkContainer to="/">
-            <Nav.Link>Medications</Nav.Link>
-          </LinkContainer>
-          <LinkContainer to="/create">
-            <Nav.Link>Create Medication</Nav.Link>
-          </LinkContainer>
+          {isAuthenticated && (
+            <>
+              <LinkContainer to="/">
+                <Nav.Link>Medications</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/create">
+                <Nav.Link>Create Medication</Nav.Link>
+              </LinkContainer>
+            </>
+          )}
         </Nav>
         <Nav>
-          {isAuthenticated ? (
-            <Nav.Link onClick={() => logout({ returnTo: window.location.origin })}>Log Out</Nav.Link>
+          {!isAuthenticated ? (
+            <Button onClick={() => loginWithRedirect()}>Log In</Button>
           ) : (
-            <Nav.Link onClick={loginWithRedirect}>Log In</Nav.Link>
+            <Button onClick={() => logout({ returnTo: window.location.origin })}>Log Out</Button>
           )}
         </Nav>
       </Navbar.Collapse>
-    </Container>
-  </Navbar>
-);
+    </Navbar>
+  );
+};
 
 export default NavBar;

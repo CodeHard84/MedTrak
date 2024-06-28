@@ -35,12 +35,18 @@ const useApi = () => {
   };
 
   const deleteMedication = async (id) => {
-    const token = await getIdTokenClaims();
-    await axios.delete(`https://medtrakback.onrender.com/api/medications/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token.__raw}`,
-      },
-    });
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/medications/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting medication:', error.response || error.message); // Improved error logging
+      throw error;
+    }
   };
 
   return { getMedications, createMedication, updateMedication, deleteMedication };

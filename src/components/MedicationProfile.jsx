@@ -18,8 +18,7 @@ const MedicationProfile = () => {
       try {
         const medicationData = await getMedicationById(id);
         setMedication(medicationData);
-        
-        // Fetch description and side effects if not present
+
         if (!medicationData.description || !medicationData.sideEffects) {
           const generatedData = await generateDescription(medicationData.name, id);
           setDescription(generatedData.description);

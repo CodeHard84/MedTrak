@@ -26,6 +26,8 @@ const useApi = () => {
 
   const updateMedication = async (id, medication) => {
     const token = await getIdTokenClaims();
+    console.log('medication:', medication);
+    console.log('id:', id);
     const response = await axios.put(`https://medtrakback.onrender.com/api/medications/${id}`, medication, {
       headers: {
         Authorization: `Bearer ${token.__raw}`,

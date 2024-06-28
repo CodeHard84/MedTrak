@@ -8,25 +8,23 @@ const MedicationProfile = () => {
   const navigate = useNavigate();
   const { getMedicationById, generateDescription } = useApi();
   const [medication, setMedication] = useState(null);
-  const [description, setDescription] = useState('');
-  const [sideEffects, setSideEffects] = useState('');
   const [loading, setLoading] = useState(true);
+  const [descriptionLoading, setDescriptionLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchMedication = async () => {
       try {
-        const medicationData = await getMedicationById(id);
-        setMedication(medicationData);
+        const fetchedMedication = await getMedicationById(id);
+        setMedication(fetchedMedication);
 
-        if (!medicationData.description || !medicationData.sideEffects) {
-          const generatedData = await generateDescription(medicationData.name, id);
-          setDescription(generatedData.description);
-          setSideEffects(generatedData.sideEffects);
-        } else {
-          setDescription(medicationData.description);
-          setSideEffects(medicationData.sideEffects);
+        // Generate description and side effects if not already present
+        if (!fetchedMedication.description || !fetchedMedication.sideEffects) {
+          const { description, sideEffects } = await generateDescription(fetchedMedication.name, id);
+          setMedication(prev => ({ ...prev, description, sideEffects }));
         }
+
+        setDescriptionLoading(false);
       } catch (error) {
         console.error('Error fetching medication:', error);
       } finally {
@@ -69,15 +67,19 @@ const MedicationProfile = () => {
       <h1>{medication.name}</h1>
       <p>Dosage: {medication.dosage}</p>
       <p>Frequency: {medication.frequency}</p>
-      {description ? (
-        <div className="mt-3">
-          <h3>Description:</h3>
-          <p>{description}</p>
-          <h3>Common Side Effects:</h3>
-          <p>{sideEffects}</p>
-        </div>
+      {descriptionLoading ? (
+        <Spinner animation="border" />
       ) : (
-        <p>Loading description and side effects...</p>
+        <>
+          <div className="mt-3">
+            <h3>Description:</h3>
+            <p>{medication.description}</p>
+          </div>
+          <div className="mt-3">
+            <h3>Side Effects:</h3>
+            <p>{medication.sideEffects}</p>
+          </div>
+        </>
       )}
       <div className="mt-3">
         <Button variant="warning" onClick={handleEdit} className="me-2">

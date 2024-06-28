@@ -36,10 +36,10 @@ const useApi = () => {
 
   const deleteMedication = async (id) => {
     try {
-      const token = await getAccessTokenSilently();
+      const token = await getIdTokenClaims();
       const response = await axios.delete(`${process.env.REACT_APP_API_URL}/medications/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token.__raw}`,
         }
       });
       return response.data;

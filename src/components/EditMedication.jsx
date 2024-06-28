@@ -69,11 +69,12 @@ const EditMedication = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Submitting form with data:', formState); // Log formState
     try {
-      await updateMedication(formState);
+      await updateMedication(id, formState);
       navigate('/');
     } catch (error) {
-      console.error('Error updating medication:', error);
+      console.error('Error updating medication:', error.response?.data || error.message);
     }
   };
 
@@ -252,4 +253,3 @@ const EditMedication = () => {
 };
 
 export default EditMedication;
-

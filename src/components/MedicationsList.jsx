@@ -1,36 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, Container, Button, Spinner } from 'react-bootstrap';
+import { Button, Container, Table, Spinner, Modal } from 'react-bootstrap';
 import useApi from '../api/medications';
 
 const MedicationsList = () => {
   const { getMedications, deleteMedication } = useApi();
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [deleteMedicationDetails, setDeleteMedicationDetails] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMedications = async () => {
-      try {
-        const meds = await getMedications();
-        setMedications(meds);
-      } catch (error) {
-        console.error('Error fetching medications:', error);
-      } finally {
-        setLoading(false);
-      }
+      const data = await getMedications();
+      setMedications(data);
+      setLoading(false);
     };
 
     fetchMedications();
   }, [getMedications]);
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteMedication(id);
-      setMedications(medications.filter(medication => medication._id !== id));
-    } catch (error) {
-      console.error('Error deleting medication:', error);
-    }
+  const handleShowModal = (medication) => {
+    setDeleteMedicationDetails(medication);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setDeleteMedicationDetails(null);
+  };
+
+  const handleDelete = async () => {
+    await deleteMedication(deleteMedicationDetails._id);
+    setMedications(medications.filter((medication) => medication._id !== deleteMedicationDetails._id));
+    handleCloseModal();
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/edit/${id}`);
   };
 
   if (loading) {
@@ -57,35 +65,32 @@ const MedicationsList = () => {
         <tbody>
           {medications.map((medication) => (
             <tr key={medication._id}>
-              <td>
-                <a href={`/medications/${medication._id}`} onClick={(e) => {
-                  e.preventDefault();
-                  navigate(`/medications/${medication._id}`);
-                }}>
-                  {medication.name}
-                </a>
-              </td>
+              <td>{medication.name}</td>
               <td>{medication.dosage}</td>
               <td>{medication.frequency}</td>
               <td>
-                <Button
-                  variant="warning"
-                  className="me-2"
-                  onClick={() => navigate(`/edit/${medication._id}`)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => handleDelete(medication._id)}
-                >
-                  Delete
-                </Button>
+                <Button variant="warning" onClick={() => handleEdit(medication._id)}>Edit</Button>{' '}
+                <Button variant="danger" onClick={() => handleShowModal(medication)}>Delete</Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete the medication "{deleteMedicationDetails?.name}"?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

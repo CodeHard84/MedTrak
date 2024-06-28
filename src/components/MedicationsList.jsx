@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Container, Table, Spinner, Modal } from 'react-bootstrap';
 import useApi from '../api/medications';
 import moment from 'moment-timezone';
@@ -42,25 +42,50 @@ const MedicationsList = () => {
     navigate(`/edit/${id}`);
   };
 
-  const getNextDoseTime = (medication) => {
-    const now = moment();
-    const timezone = medication.timezone;
+  const calculateNextDose = (medication) => {
+    const now = moment().tz(medication.timezone);
+    let nextDose;
 
-    for (let time of medication.times) {
-      let medTime = moment.tz(time, 'HH:mm', timezone).set({
+    if (medication.frequency === 'Daily') {
+      nextDose = medication.times.map(time => {
+        const doseTime = moment.tz(time, 'HH:mm', medication.timezone).set({
+          year: now.year(),
+          month: now.month(),
+          date: now.date(),
+        });
+
+        if (doseTime.isBefore(now)) {
+          doseTime.add(1, 'day');
+        }
+        return doseTime;
+      }).sort((a, b) => a - b)[0];
+    } else if (medication.frequency === 'Weekly') {
+      nextDose = medication.dayOfWeek.map(day => {
+        const doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).day(day).set({
+          year: now.year(),
+          month: now.month(),
+          date: now.date(),
+        });
+
+        if (doseTime.isBefore(now)) {
+          doseTime.add(7, 'days');
+        }
+        return doseTime;
+      }).sort((a, b) => a - b)[0];
+    } else if (medication.frequency === 'Monthly') {
+      const doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).set({
         year: now.year(),
         month: now.month(),
-        date: now.date()
+        date: medication.dayOfMonth,
       });
 
-      if (medTime.isBefore(now)) {
-        medTime.add(1, 'day');
+      if (doseTime.isBefore(now)) {
+        doseTime.add(1, 'month');
       }
-
-      return medTime.format('YYYY-MM-DD HH:mm');
+      nextDose = doseTime;
     }
 
-    return 'No doses scheduled';
+    return nextDose ? nextDose.format('YYYY-MM-DD HH:mm') : 'No upcoming dose';
   };
 
   if (loading) {
@@ -89,11 +114,11 @@ const MedicationsList = () => {
           {medications.map((medication) => (
             <tr key={medication._id}>
               <td>
-                <Link to={`/medications/${medication._id}`}>{medication.name}</Link>
+                <a href={`/medications/${medication._id}`}>{medication.name}</a>
               </td>
               <td>{medication.dosage}</td>
               <td>{medication.frequency}</td>
-              <td>{getNextDoseTime(medication)}</td>
+              <td>{calculateNextDose(medication)}</td>
               <td>
                 <Button variant="warning" onClick={() => handleEdit(medication._id)}>Edit</Button>{' '}
                 <Button variant="danger" onClick={() => handleShowModal(medication)}>Delete</Button>

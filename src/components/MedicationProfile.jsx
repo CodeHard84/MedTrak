@@ -54,7 +54,7 @@ const MedicationProfile = () => {
 
   const renderSideEffects = () => {
     if (!medication.sideEffects) return null;
-    const sideEffectsList = medication.sideEffects.split(',').map(effect => effect.trim());
+    const sideEffectsList = medication.sideEffects.split(/[\d+]\.\s/).filter(effect => effect.trim() !== '');
     return (
       <ul>
         {sideEffectsList.map((effect, index) => (

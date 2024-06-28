@@ -1,20 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Button, Spinner } from 'react-bootstrap';
-import useApi from '../api/medications';
+import { Container, Spinner, Button } from 'react-bootstrap';
 
 const MedicationProfile = () => {
   const { id } = useParams();
-  const { getMedicationById, deleteMedication } = useApi();
-  const [medication, setMedication] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [medication, setMedication] = useState(null);
+  const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchMedication = async () => {
       try {
-        const med = await getMedicationById(id);
-        setMedication(med);
+        const response = await axios.get(`/api/medications/${id}`);
+        setMedication(response.data);
+
+        // Automatically generate the description after fetching the medication
+        const generateDescription = async (medicationName) => {
+          try {
+            const descriptionResponse = await axios.post('/api/openai/generate-description', { medicationName });
+            setDescription(descriptionResponse.data.description);
+          } catch (error) {
+            console.error('Error generating description:', error);
+          }
+        };
+
+        await generateDescription(response.data.name);
       } catch (error) {
         console.error('Error fetching medication:', error);
       } finally {
@@ -23,19 +36,24 @@ const MedicationProfile = () => {
     };
 
     fetchMedication();
-  }, [id, getMedicationById]);
-
-  const handleDelete = async () => {
-    try {
-      await deleteMedication(id);
-      navigate('/');
-    } catch (error) {
-      console.error('Error deleting medication:', error);
-    }
-  };
+  }, [id]);
 
   const handleEdit = () => {
     navigate(`/edit/${id}`);
+  };
+
+  const handleDelete = async () => {
+    if (deleting) return;
+    setDeleting(true);
+
+    try {
+      await axios.delete(`/api/medications/${id}`);
+      navigate('/');
+    } catch (error) {
+      console.error('Error deleting medication:', error);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (loading) {
@@ -47,49 +65,27 @@ const MedicationProfile = () => {
     );
   }
 
-  if (!medication) {
-    return (
-      <Container className="text-center mt-5">
-        <p>Medication not found</p>
-      </Container>
-    );
-  }
-
   return (
     <Container className="mt-5">
       <h1>{medication.name}</h1>
-      <Row>
-        <Col sm={2}><strong>Dosage:</strong></Col>
-        <Col sm={10}>{medication.dosage}</Col>
-      </Row>
-      <Row>
-        <Col sm={2}><strong>Frequency:</strong></Col>
-        <Col sm={10}>{medication.frequency}</Col>
-      </Row>
-      {medication.frequency === 'daily' && (
-        <Row>
-          <Col sm={2}><strong>Times per day:</strong></Col>
-          <Col sm={10}>{medication.howManyTimes}</Col>
-        </Row>
+      <p>Dosage: {medication.dosage}</p>
+      <p>Frequency: {medication.frequency}</p>
+      {description ? (
+        <div className="mt-3">
+          <h3>Description:</h3>
+          <p>{description}</p>
+        </div>
+      ) : (
+        <p>Loading description...</p>
       )}
-      {medication.frequency === 'weekly' && (
-        <Row>
-          <Col sm={2}><strong>Day of the week:</strong></Col>
-          <Col sm={10}>{medication.dayOfWeek}</Col>
-        </Row>
-      )}
-      {medication.frequency === 'monthly' && (
-        <Row>
-          <Col sm={2}><strong>Day of the month:</strong></Col>
-          <Col sm={10}>{medication.dayOfMonth}</Col>
-        </Row>
-      )}
-      {/* <Row>
-        <Col sm={2}><strong>Time:</strong></Col>
-        <Col sm={10}>{medication.time}</Col>
-      </Row> */}
-      <Button variant="warning" onClick={handleEdit} className="mt-3 me-2">Edit</Button>
-      <Button variant="danger" onClick={handleDelete} className="mt-3">Delete</Button>
+      <div className="mt-3">
+        <Button variant="warning" onClick={handleEdit} className="me-2">
+          Edit
+        </Button>
+        <Button variant="danger" onClick={handleDelete} disabled={deleting}>
+          {deleting ? 'Deleting...' : 'Delete'}
+        </Button>
+      </div>
     </Container>
   );
 };

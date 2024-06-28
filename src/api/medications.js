@@ -67,7 +67,7 @@ const useApi = () => {
       },
     });
     return response.data;
-  };
+  };  
 
   return { getMedications, getMedicationById, createMedication, updateMedication, deleteMedication, generateDescription };
 };

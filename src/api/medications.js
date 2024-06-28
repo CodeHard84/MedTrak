@@ -36,8 +36,6 @@ const useApi = () => {
 
   const updateMedication = async (id, medication) => {
     const token = await getIdTokenClaims();
-    console.log('medication:', medication);
-    console.log('id:', id);
     const response = await axios.put(`https://medtrakback.onrender.com/api/medications/${id}`, medication, {
       headers: {
         Authorization: `Bearer ${token.__raw}`,
@@ -56,12 +54,22 @@ const useApi = () => {
       });
       return response.data;
     } catch (error) {
-      console.error('Error deleting medication:', error.response || error.message); // Improved error logging
+      console.error('Error deleting medication:', error.response || error.message);
       throw error;
     }
   };
 
-  return { getMedications, getMedicationById, createMedication, updateMedication, deleteMedication };
+  const generateDescription = async (medicationName) => {
+    const token = await getIdTokenClaims();
+    const response = await axios.post('https://medtrakback.onrender.com/api/openai/generate-description', { medicationName }, {
+      headers: {
+        Authorization: `Bearer ${token.__raw}`,
+      },
+    });
+    return response.data;
+  };
+
+  return { getMedications, getMedicationById, createMedication, updateMedication, deleteMedication, generateDescription };
 };
 
 export default useApi;

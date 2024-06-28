@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Spinner, Button } from 'react-bootstrap';
+import useApi from '../api/medications'; // Adjust the import path as necessary
 
 const MedicationProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getMedicationById, deleteMedication, generateDescription } = useApi();
   const [medication, setMedication] = useState(null);
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(true);
@@ -14,29 +15,20 @@ const MedicationProfile = () => {
   useEffect(() => {
     const fetchMedication = async () => {
       try {
-        const response = await axios.get(`https://medtrakback.onrender.com/api/medications/${id}`);
-        setMedication(response.data);
+        const response = await getMedicationById(id);
+        setMedication(response);
 
-        // Automatically generate the description after fetching the medication
-        const generateDescription = async (medicationName) => {
-          try {
-            const descriptionResponse = await axios.post('https://medtrakback.onrender.com/api/openai/generate-description', { medicationName });
-            setDescription(descriptionResponse.data.description);
-          } catch (error) {
-            console.error('Error generating description:', error);
-          }
-        };
-
-        await generateDescription(response.data.name);
+        const descriptionResponse = await generateDescription(response.name);
+        setDescription(descriptionResponse.description);
       } catch (error) {
-        console.error('Error fetching medication:', error);
+        console.error('Error fetching medication or generating description:', error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchMedication();
-  }, [id]);
+  }, [id, getMedicationById, generateDescription]);
 
   const handleEdit = () => {
     navigate(`/edit/${id}`);
@@ -47,7 +39,7 @@ const MedicationProfile = () => {
     setDeleting(true);
 
     try {
-      await axios.delete(`https://medtrakback.onrender.com/api/medications/${id}`);
+      await deleteMedication(id);
       navigate('/');
     } catch (error) {
       console.error('Error deleting medication:', error);

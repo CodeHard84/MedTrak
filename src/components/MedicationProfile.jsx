@@ -6,33 +6,32 @@ import useApi from '../api/medications';
 const MedicationProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getMedicationById, deleteMedication, generateDescription } = useApi();
+  const { getMedicationById, generateDescription } = useApi();
   const [medication, setMedication] = useState(null);
   const [description, setDescription] = useState('');
-  const [sideEffects, setSideEffects] = useState([]);
+  const [sideEffects, setSideEffects] = useState('');
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchMedication = async () => {
       try {
-        const response = await getMedicationById(id);
-        setMedication(response);
-
-        // Check if description and side effects exist and generate if necessary
-        if (response.description && response.sideEffects) {
-          setDescription(response.description);
-          setSideEffects(response.sideEffects);
-          setLoading(false); // Stop loading if data already exists
+        const medicationData = await getMedicationById(id);
+        setMedication(medicationData);
+        
+        // Fetch description and side effects if not present
+        if (!medicationData.description || !medicationData.sideEffects) {
+          const generatedData = await generateDescription(medicationData.name);
+          setDescription(generatedData.description);
+          setSideEffects(generatedData.sideEffects);
         } else {
-          const descriptionResponse = await generateDescription(response.name);
-          setDescription(descriptionResponse.description);
-          setSideEffects(descriptionResponse.sideEffects);
-          setLoading(false); // Stop loading after data is generated
+          setDescription(medicationData.description);
+          setSideEffects(medicationData.sideEffects);
         }
       } catch (error) {
         console.error('Error fetching medication:', error);
-        setLoading(false); // Stop loading on error
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -75,21 +74,11 @@ const MedicationProfile = () => {
         <div className="mt-3">
           <h3>Description:</h3>
           <p>{description}</p>
+          <h3>Common Side Effects:</h3>
+          <p>{sideEffects}</p>
         </div>
       ) : (
-        <p>Loading description...</p>
-      )}
-      {sideEffects.length > 0 ? (
-        <div className="mt-3">
-          <h3>Top 10 Most Common Side Effects:</h3>
-          <ul>
-            {sideEffects.map((effect, index) => (
-              <li key={index}>{effect}</li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p>Loading side effects...</p>
+        <p>Loading description and side effects...</p>
       )}
       <div className="mt-3">
         <Button variant="warning" onClick={handleEdit} className="me-2">

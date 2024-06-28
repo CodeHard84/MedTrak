@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Container, Form, Button, Spinner } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const timezones = [
   "Pacific/Midway",
@@ -129,6 +130,7 @@ const UserProfile = () => {
   const [email, setEmail] = useState('');
   const [cell, setCell] = useState('');
   const [timezone, setTimezone] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -168,6 +170,7 @@ const UserProfile = () => {
         }
       );
       setProfile(response.data);
+      navigate('/'); // Redirect after saving
     } catch (error) {
       console.error('Error updating profile:', error);
     }

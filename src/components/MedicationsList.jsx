@@ -50,50 +50,47 @@ const MedicationsList = () => {
 
     if (medication.frequency === 'Daily') {
       const doses = medication.times.map(time => {
-        const doseTime = moment.tz(time, 'HH:mm', medication.timezone).set({
+        let doseTime = moment.tz(time, 'HH:mm', medication.timezone).set({
           year: now.year(),
           month: now.month(),
           date: now.date(),
         });
 
-        console.log(`Daily dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
-
         if (doseTime.isBefore(now)) {
           doseTime.add(1, 'day');
         }
+        console.log(`Daily dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
         return doseTime;
       });
 
       nextDose = doses.sort((a, b) => a - b)[0];
     } else if (medication.frequency === 'Weekly') {
       const doses = medication.dayOfWeek.map(day => {
-        const doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).day(day).set({
+        let doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).day(day).set({
           year: now.year(),
           month: now.month(),
           date: now.date(),
         });
 
-        console.log(`Weekly dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
-
         if (doseTime.isBefore(now)) {
           doseTime.add(7, 'days');
         }
+        console.log(`Weekly dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
         return doseTime;
       });
 
       nextDose = doses.sort((a, b) => a - b)[0];
     } else if (medication.frequency === 'Monthly') {
-      const doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).set({
+      let doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).set({
         year: now.year(),
         month: now.month(),
         date: medication.dayOfMonth,
       });
 
-      console.log(`Monthly dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
-
       if (doseTime.isBefore(now)) {
         doseTime.add(1, 'month');
       }
+      console.log(`Monthly dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
       nextDose = doseTime;
     }
 

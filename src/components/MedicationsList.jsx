@@ -44,13 +44,11 @@ const MedicationsList = () => {
 
   const calculateNextDose = (medication) => {
     const now = moment().tz(medication.timezone);
-    console.log(`Current time: ${now.format('YYYY-MM-DD HH:mm')}, Timezone: ${medication.timezone}`);
-
     let nextDose;
 
     if (medication.frequency === 'Daily') {
-      const doses = medication.times.map(time => {
-        let doseTime = moment.tz(time, 'HH:mm', medication.timezone).set({
+      nextDose = medication.times.map(time => {
+        const doseTime = moment.tz(time, 'HH:mm', medication.timezone).set({
           year: now.year(),
           month: now.month(),
           date: now.date(),
@@ -59,14 +57,11 @@ const MedicationsList = () => {
         if (doseTime.isBefore(now)) {
           doseTime.add(1, 'day');
         }
-        console.log(`Daily dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
         return doseTime;
-      });
-
-      nextDose = doses.sort((a, b) => a - b)[0];
+      }).sort((a, b) => a - b)[0];
     } else if (medication.frequency === 'Weekly') {
-      const doses = medication.dayOfWeek.map(day => {
-        let doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).day(day).set({
+      nextDose = medication.dayOfWeek.map(day => {
+        const doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).day(day).set({
           year: now.year(),
           month: now.month(),
           date: now.date(),
@@ -75,13 +70,10 @@ const MedicationsList = () => {
         if (doseTime.isBefore(now)) {
           doseTime.add(7, 'days');
         }
-        console.log(`Weekly dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
         return doseTime;
-      });
-
-      nextDose = doses.sort((a, b) => a - b)[0];
+      }).sort((a, b) => a - b)[0];
     } else if (medication.frequency === 'Monthly') {
-      let doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).set({
+      const doseTime = moment.tz(medication.time, 'HH:mm', medication.timezone).set({
         year: now.year(),
         month: now.month(),
         date: medication.dayOfMonth,
@@ -90,11 +82,9 @@ const MedicationsList = () => {
       if (doseTime.isBefore(now)) {
         doseTime.add(1, 'month');
       }
-      console.log(`Monthly dose time: ${doseTime.format('YYYY-MM-DD HH:mm')}`);
       nextDose = doseTime;
     }
 
-    console.log(`Next dose: ${nextDose ? nextDose.format('YYYY-MM-DD HH:mm') : 'None'}`);
     return nextDose ? nextDose.format('YYYY-MM-DD HH:mm') : 'No upcoming dose';
   };
 

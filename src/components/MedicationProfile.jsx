@@ -6,7 +6,7 @@ import useApi from '../api/medications';
 const MedicationProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getMedicationById, deleteMedication } = useApi();
+  const { getMedicationById, deleteMedication, generateDescription } = useApi();
   const [medication, setMedication] = useState(null);
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(true);
@@ -28,20 +28,11 @@ const MedicationProfile = () => {
     fetchMedication();
   }, [id, getMedicationById]);
 
-  const generateDescription = async () => {
+  const handleGenerateDescription = async () => {
     setDescriptionLoading(true);
     try {
-      const response = await axios.post(
-        'https://medtrakback.onrender.com/api/openai/generate-description',
-        { medicationName: medication.name },
-        {
-          headers: {
-            Authorization: `Bearer ${token.__raw}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      setDescription(response.data.description);
+      const response = await generateDescription(medication.name);
+      setDescription(response.description);
     } catch (error) {
       console.error('Error generating description:', error);
     } finally {
@@ -82,7 +73,7 @@ const MedicationProfile = () => {
       <p>Dosage: {medication.dosage}</p>
       <p>Frequency: {medication.frequency}</p>
       <div className="mt-3">
-        <Button onClick={generateDescription} disabled={descriptionLoading}>
+        <Button onClick={handleGenerateDescription} disabled={descriptionLoading}>
           {descriptionLoading ? 'Generating...' : 'Generate Description'}
         </Button>
       </div>

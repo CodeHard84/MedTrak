@@ -5,6 +5,7 @@ import MedicationsList from './components/MedicationsList';
 import CreateMedication from './components/CreateMedication';
 import EditMedication from './components/EditMedication';
 import MedicationProfile from './components/MedicationProfile';
+import Hero from './components/Hero';
 import NavBar from './components/NavBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container } from 'react-bootstrap';
@@ -25,10 +26,10 @@ const App = () => {
       />
       <Container className="mt-3">
         <Routes>
-          <Route path="/" element={isAuthenticated ? <MedicationsList /> : <Navigate to="/login" />} />
-          <Route path="/create" element={isAuthenticated ? <CreateMedication /> : <Navigate to="/login" />} />
-          <Route path="/edit/:id" element={isAuthenticated ? <EditMedication /> : <Navigate to="/login" />} />
-          <Route path="/medications/:id" element={isAuthenticated ? <MedicationProfile /> : <Navigate to="/login" />} />
+          <Route path="/" element={isAuthenticated ? <MedicationsList /> : <Hero />} />
+          <Route path="/create" element={isAuthenticated ? <CreateMedication /> : <Navigate to="/" />} />
+          <Route path="/edit/:id" element={isAuthenticated ? <EditMedication /> : <Navigate to="/" />} />
+          <Route path="/medications/:id" element={isAuthenticated ? <MedicationProfile /> : <Navigate to="/" />} />
         </Routes>
       </Container>
     </div>

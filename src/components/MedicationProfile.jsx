@@ -84,10 +84,10 @@ const MedicationProfile = () => {
           <Col sm={10}>{medication.dayOfMonth}</Col>
         </Row>
       )}
-      <Row>
+      {/* <Row>
         <Col sm={2}><strong>Time:</strong></Col>
         <Col sm={10}>{medication.time}</Col>
-      </Row>
+      </Row> */}
       <Button variant="warning" onClick={handleEdit} className="mt-3 me-2">Edit</Button>
       <Button variant="danger" onClick={handleDelete} className="mt-3">Delete</Button>
     </Container>

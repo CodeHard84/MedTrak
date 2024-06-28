@@ -18,7 +18,6 @@ const MedicationProfile = () => {
         const fetchedMedication = await getMedicationById(id);
         setMedication(fetchedMedication);
 
-        // Generate description and side effects if not already present
         if (!fetchedMedication.description || !fetchedMedication.sideEffects) {
           const { description, sideEffects } = await generateDescription(fetchedMedication.name, id);
           setMedication(prev => ({ ...prev, description, sideEffects }));
@@ -53,6 +52,18 @@ const MedicationProfile = () => {
     }
   };
 
+  const renderSideEffects = () => {
+    if (!medication.sideEffects) return null;
+    const sideEffectsList = medication.sideEffects.split(',').map(effect => effect.trim());
+    return (
+      <ul>
+        {sideEffectsList.map((effect, index) => (
+          <li key={index}>{effect}</li>
+        ))}
+      </ul>
+    );
+  };
+
   if (loading) {
     return (
       <Container className="text-center mt-5">
@@ -77,7 +88,7 @@ const MedicationProfile = () => {
           </div>
           <div className="mt-3">
             <h3>Side Effects:</h3>
-            <p>{medication.sideEffects}</p>
+            {renderSideEffects()}
           </div>
         </>
       )}

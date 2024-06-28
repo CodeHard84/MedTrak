@@ -37,7 +37,7 @@ const useApi = () => {
   const deleteMedication = async (id) => {
     try {
       const token = await getIdTokenClaims();
-      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/medications/${id}`, {
+      const response = await axios.delete(`https://medtrakback.onrender.com/api/medications/${id}`, {
         headers: {
           Authorization: `Bearer ${token.__raw}`,
         }

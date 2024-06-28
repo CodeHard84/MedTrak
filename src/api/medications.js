@@ -59,9 +59,9 @@ const useApi = () => {
     }
   };
 
-  const generateDescription = async (medicationName) => {
+  const generateDescription = async (medicationName, medicationId) => {
     const token = await getIdTokenClaims();
-    const response = await axios.post('https://medtrakback.onrender.com/api/openai/generate-description', { medicationName }, {
+    const response = await axios.post('https://medtrakback.onrender.com/api/openai/generate-description', { medicationName, medicationId }, {
       headers: {
         Authorization: `Bearer ${token.__raw}`,
       },

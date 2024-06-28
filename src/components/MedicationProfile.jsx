@@ -34,6 +34,10 @@ const MedicationProfile = () => {
     }
   };
 
+  const handleEdit = () => {
+    navigate(`/edit/${id}`);
+  };
+
   if (loading) {
     return (
       <Container className="text-center mt-5">
@@ -84,6 +88,7 @@ const MedicationProfile = () => {
         <Col sm={2}><strong>Time:</strong></Col>
         <Col sm={10}>{medication.time}</Col>
       </Row>
+      <Button variant="warning" onClick={handleEdit} className="mt-3 me-2">Edit</Button>
       <Button variant="danger" onClick={handleDelete} className="mt-3">Delete</Button>
     </Container>
   );

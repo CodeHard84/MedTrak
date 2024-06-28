@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button, Container, Table, Spinner, Modal } from 'react-bootstrap';
 import useApi from '../api/medications';
 import moment from 'moment-timezone';
@@ -89,7 +89,7 @@ const MedicationsList = () => {
           {medications.map((medication) => (
             <tr key={medication._id}>
               <td>
-                <a href={`/medications/${medication._id}`}>{medication.name}</a>
+                <Link to={`/medications/${medication._id}`}>{medication.name}</Link>
               </td>
               <td>{medication.dosage}</td>
               <td>{medication.frequency}</td>

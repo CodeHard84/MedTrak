@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import MedicationsList from './components/MedicationsList';
 import CreateMedication from './components/CreateMedication';
@@ -25,10 +25,10 @@ const App = () => {
       />
       <Container className="mt-3">
         <Routes>
-          <Route path="/" element={<MedicationsList />} />
-          <Route path="/create" element={<CreateMedication />} />
-          <Route path="/edit/:id" element={<EditMedication />} />
-          <Route path="/medications/:id" element={<MedicationProfile />} />
+          <Route path="/" element={isAuthenticated ? <MedicationsList /> : <Navigate to="/login" />} />
+          <Route path="/create" element={isAuthenticated ? <CreateMedication /> : <Navigate to="/login" />} />
+          <Route path="/edit/:id" element={isAuthenticated ? <EditMedication /> : <Navigate to="/login" />} />
+          <Route path="/medications/:id" element={isAuthenticated ? <MedicationProfile /> : <Navigate to="/login" />} />
         </Routes>
       </Container>
     </div>

@@ -14,13 +14,13 @@ const MedicationProfile = () => {
   useEffect(() => {
     const fetchMedication = async () => {
       try {
-        const response = await axios.get(`/api/medications/${id}`);
+        const response = await axios.get(`https://medtrakback.onrender.com/api/medications/${id}`);
         setMedication(response.data);
 
         // Automatically generate the description after fetching the medication
         const generateDescription = async (medicationName) => {
           try {
-            const descriptionResponse = await axios.post('/api/openai/generate-description', { medicationName });
+            const descriptionResponse = await axios.post('https://medtrakback.onrender.com/api/openai/generate-description', { medicationName });
             setDescription(descriptionResponse.data.description);
           } catch (error) {
             console.error('Error generating description:', error);
@@ -47,7 +47,7 @@ const MedicationProfile = () => {
     setDeleting(true);
 
     try {
-      await axios.delete(`/api/medications/${id}`);
+      await axios.delete(`https://medtrakback.onrender.com/api/medications/${id}`);
       navigate('/');
     } catch (error) {
       console.error('Error deleting medication:', error);

@@ -24,6 +24,9 @@ const NavBar = ({ isAuthenticated, loginWithRedirect, logout }) => {
               <LinkContainer to="/create">
                 <Nav.Link>Create Medication</Nav.Link>
               </LinkContainer>
+              <LinkContainer to="/profile">
+                <Nav.Link>Profile</Nav.Link>
+              </LinkContainer>
             </>
           )}
         </Nav>
